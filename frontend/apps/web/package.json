@@ -32,10 +32,13 @@
     "@mui/material": "9.5.0",
     "@mui/material-nextjs": "^9.5.0",
     "axios": "^1.21.0",
+    "inversify": "^8.2.4",
     "laravel-echo": "^2.6.3",
     "next": "16.3.5",
     "pusher-js": "^8.6.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "reflect-metadata": "^0.2.2",
+    "zustand": "^5.1.0"
   }
 }

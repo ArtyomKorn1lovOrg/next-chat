@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import * as FormatHelper from '@app/shared/FormatHelper';
+import * as FormatHelper from '@app/shared/utils/FormatHelper';
 
 describe('FormatHelper.normalizePhone', () => {
   it.each([

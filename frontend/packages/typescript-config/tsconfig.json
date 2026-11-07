@@ -21,8 +21,10 @@
       }
     ],
     "paths": {
-      "@app/ui/*": ["../ui/src/*"],
       "@app/shared/*": ["../shared/src/*"],
+      "@app/ui/*": ["../ui/src/*"],
+      "@app/user/*": ["../user/src/*"],
+      "@app/chat/*": ["../chat/src/*"],
       "@app/web/*": ["../../apps/web/*"]
     }
   }
