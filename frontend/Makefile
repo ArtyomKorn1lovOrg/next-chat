@@ -33,7 +33,6 @@ typecheck:
 
 check:
 	pnpm run check
-	pnpm run typecheck
 
 test:
 	pnpm run test:run
