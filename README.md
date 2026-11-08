@@ -1,138 +1,70 @@
 # Next Chat
 
-Next Chat — простой мессенджер в формате монорепозитория. Проект создаётся как учебная и экспериментальная площадка для разработки общего набора функций сразу для веба и мобильного приложения.
+Next Chat — чат для обмена сообщениями. Веб-клиент написан на Next.js, React и TypeScript, API — на Laravel. Для проверки доставки сообщений в реальном времени клиент подписывается на события Laravel Reverb через Laravel Echo.
 
-Основная идея — реализовать веб-клиент на Next.js, мобильное приложение на Flutter и API на Laravel, сохранив независимые границы между клиентами и серверной частью.
+## Структура репозитория
 
-## Статус проекта
+| Каталог | Содержимое |
+| --- | --- |
+| [frontend/](frontend/) | Приложение Next.js в `apps/web`, общие компоненты, утилиты и конфигурации в `packages/`. Зависимости управляются через pnpm workspaces. |
+| [backend/](backend/) | Laravel API. Модули проекта находятся в `packages/` и подключаются через Composer. |
+| [docker/](docker/) | Конфигурации Compose для development и production, Dockerfile в `images/` и конфигурации сервисов в `volumes/`. |
 
-Проект находится на начальном этапе разработки.
+## Локальный запуск в Docker
 
-- frontend содержит базовое Next.js-приложение и является основой для дальнейшей реализации интерфейса по FSD;
-- backend содержит Laravel-приложение с заделом под DDD и упрощённой реализации Clean Architecture;
-- mobile пока является заготовкой для будущего Flutter-приложения;
-- Docker Compose описывает локальное окружение frontend, backend, PHP-FPM, MySQL и phpMyAdmin.
+Понадобятся Docker с Compose v2 и Make. Выполняйте команды из корня репозитория.
 
-Функциональность мессенджера, авторизация, обмен сообщениями в реальном времени и мобильное приложение ещё находятся в плане развития.
+1. Создайте файлы окружения.
 
-## Архитектура
+   ```bash
+   cp docker/.env.example docker/.env
+   cp backend/.env.example backend/.env
+   ```
 
-Репозиторий организован как монорепозиторий:
+   В `docker/.env` укажите свой UID и GID. Их можно узнать командами `id -u` и `id -g` в Linux или WSL.
 
-```text
-next-chat/
-├── frontend/             # веб-клиент на Next.js и React
-├── backend/              # API на Laravel и PHP
-├── mobile/               # будущее Flutter-приложение
-├── docker/               # конфигурация Nginx и MySQL
-├── docs/                 # проектная документация
-├── docker-compose.yml    # локальное окружение
-└── .env.example          # переменные окружения Compose
-```
+2. Настройте Laravel. В `backend/.env` задайте следующие параметры, заменив значения в угловых скобках своими.
 
-### Frontend
+   ```dotenv
+   APP_URL=http://localhost:8003
 
-Веб-клиент строится на следующих технологиях:
+   DB_CONNECTION=mysql
+   DB_HOST=mysql
+   DB_PORT=3306
+   DB_DATABASE=<значение MYSQL_DATABASE>
+   DB_USERNAME=<значение MYSQL_USER>
+   DB_PASSWORD=<значение MYSQL_PASSWORD>
 
-- Next.js;
-- React;
-- TypeScript;
-- архитектура Feature-Sliced Design (FSD).
+   BROADCAST_CONNECTION=reverb
+   QUEUE_CONNECTION=database
 
-Frontend будет отвечать за пользовательский интерфейс, работу с API и клиентское состояние приложения.
+   REVERB_APP_ID=next-chat-local
+   REVERB_APP_KEY=<ключ приложения Reverb>
+   REVERB_APP_SECRET=<секрет приложения Reverb>
+   REVERB_HOST=reverb
+   REVERB_PORT=8080
+   REVERB_SCHEME=http
+   REVERB_SERVER_HOST=0.0.0.0
+   REVERB_SERVER_PORT=8080
+   ```
 
-### Backend
+   Значения `MYSQL_DATABASE`, `MYSQL_USER` и `MYSQL_PASSWORD` берутся из [конфигурации MySQL](docker/volumes/mysql/env.yml).
 
-Backend строится на:
+3. Создайте `frontend/apps/web/.env`. Скопируйте в `NEXT_PUBLIC_REVERB_APP_KEY` значение `REVERB_APP_KEY` из Laravel.
 
-- PHP;
-- Laravel;
-- MySQL;
-- DDD и Clean Architecture.
+   ```dotenv
+   NEXT_PUBLIC_API_URL=http://localhost:8003
+   NEXT_PUBLIC_REVERB_APP_KEY=<значение REVERB_APP_KEY>
+   NEXT_PUBLIC_REVERB_HOST=localhost
+   NEXT_PUBLIC_REVERB_PORT=8005
+   NEXT_PUBLIC_REVERB_SCHEME=http
+   ```
 
-Серверная часть будет предоставлять API для пользователей, диалогов и сообщений. Внутри backend уже выделены области `Core`, `Message` и `User`, которые будут развиваться как отдельные модули.
+4. Соберите образы и проверьте приложение. В development контейнеры используют каталоги `frontend` и `backend` с хоста, поэтому зависимости нужно установить в этих каталогах.
 
-### Mobile
-
-Мобильный клиент планируется реализовать на Flutter. Для него будет использоваться простой feature-first-подход, чтобы структура соответствовала целям и масштабу мобильного приложения.
-
-## Docker-окружение
-
-В Compose предусмотрены следующие сервисы:
-
-| Сервис | Назначение | Порт хоста |
-| --- | --- | ---: |
-| `frontend` | Next.js-приложение | `8001` |
-| `backend` | Nginx для Laravel | `8002` |
-| `php` | PHP-FPM и Laravel | внутренний `9000` |
-| `mysql` | база данных | внутренний `3306` |
-| `phpmyadmin` | веб-интерфейс для MySQL | `8003` |
-
-Конфигурация рассчитана на локальную разработку. Перед первым запуском необходимо подготовить env-файлы и проверить Docker-конфигурацию: текущая версия Compose требует доработки сетей, MySQL env-файла и frontend Dockerfile. В будущем порты будут изменены на доменные имена.
-
-## Требования
-
-- Docker;
-- Docker Compose v2;
-- Git.
-
-Для запуска также потребуются локальные env-файлы, созданные на основе `.env.example` и `backend/.env.example`.
-
-## Запуск
-
-После подготовки env-файлов и исправления текущих ограничений Docker-конфигурации проект запускается из корня репозитория:
-
-```bash
-docker compose build
-docker compose up
-```
-
-После запуска:
-
-- Next-прилоежение: <http://localhost:8001>;
-- Laravel API: <http://localhost:8002>;
-- phpMyAdmin: <http://localhost:8003>.
-
-Для остановки окружения:
-
-```bash
-docker compose down
-```
-
-## Разработка без Docker
-
-Frontend:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Проверка production-сборки frontend:
-
-```bash
-npm run build
-```
-
-Backend:
-
-```bash
-cd backend
-composer install
-php artisan serve
-```
-
-Команды Laravel требуют корректно настроенного `backend/.env`, ключа приложения и доступной базы данных.
-
-## План развития
-
-- исправить и стабилизировать Docker Compose-окружение;
-- сформировать базовую FSD-структуру frontend;
-- реализовать функционал мессенджера;
-- создать Flutter-приложение с тем же API;
-- добавить документацию API;
-
-## Лицензия
-
-Проект находится в разработке. Лицензия пока не определена.
+   ```bash
+   make build
+   make up
+   make shell
+   make migrate
+   ```
