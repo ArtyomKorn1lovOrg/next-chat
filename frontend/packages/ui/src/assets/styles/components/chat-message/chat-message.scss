@@ -1,0 +1,44 @@
+@use '../../vars' as ui;
+
+.b-chat-message {
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 10px 13px 7px;
+  border-radius: ui.$roundedMessage ui.$roundedMessage ui.$roundedMessage 4px;
+  background: ui.$colorIncoming;
+  color: ui.$colorText;
+
+  &_outgoing {
+    align-self: flex-end;
+    background: ui.$colorOutgoing;
+    border-radius: ui.$roundedMessage ui.$roundedMessage 4px ui.$roundedMessage;
+  }
+
+  &__text {
+    font-size: ui.$textRegular;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  &__meta {
+    @include ui.flex(row, center, flex-end);
+    gap: 5px;
+    margin-top: 4px;
+    color: ui.$colorMuted;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  &__check {
+    width: 16px;
+    height: 12px;
+    color: ui.$colorAccent;
+  }
+}
+
+@media (max-width: ui.$sm) {
+  .b-chat-message {
+    max-width: 90%;
+  }
+}

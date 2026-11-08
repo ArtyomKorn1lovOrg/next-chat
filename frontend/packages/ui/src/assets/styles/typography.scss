@@ -1,0 +1,19 @@
+@use 'vars' as ui;
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-size: inherit;
+  font-weight: ui.$textSemibold;
+}
+
+button,
+input,
+textarea {
+  letter-spacing: inherit;
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@app/typescript-config",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./tsconfig.json": "./tsconfig.json"
+  },
+  "files": [
+    "tsconfig.json"
+  ]
+}

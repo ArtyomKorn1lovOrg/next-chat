@@ -1,0 +1,17 @@
+.git
+.idea
+.vscode
+
+**/node_modules
+**/.pnpm-store
+**/.next
+**/out
+**/dist
+**/.cache
+**/coverage
+**/*.tsbuildinfo
+**/*.log
+
+**/.env
+**/.env.*
+!**/.env.example

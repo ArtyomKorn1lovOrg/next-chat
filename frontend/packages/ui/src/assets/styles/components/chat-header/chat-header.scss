@@ -1,0 +1,36 @@
+@use '../../vars' as ui;
+
+.b-chat-header {
+  @include ui.flex(row, center);
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 18px ui.$spaceLarge;
+  background: ui.$colorSurface;
+  border-bottom: 1px solid ui.$colorBorder;
+
+  &__title {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  &__status {
+    margin-top: 2px;
+    font-size: ui.$textSmall;
+    color: ui.$colorAccent;
+  }
+
+  &__indicator {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: ui.$colorOnline;
+  }
+}
+
+@media (max-width: ui.$sm) {
+  .b-chat-header {
+    padding: 14px 16px;
+  }
+}

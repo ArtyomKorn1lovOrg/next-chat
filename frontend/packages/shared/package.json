@@ -1,0 +1,26 @@
+{
+  "name": "@app/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@app/typescript-config": "workspace:*",
+    "@app/vitest-setup": "workspace:*",
+    "typescript": "7.0.2"
+  },
+  "peerDependencies": {
+    "axios": "^1.21.0",
+    "inversify": "^8.2.4",
+    "laravel-echo": "^2.6.3",
+    "pusher-js": "^8.6.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "reflect-metadata": "^0.2.2"
+  }
+}

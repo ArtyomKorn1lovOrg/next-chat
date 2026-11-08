@@ -1,0 +1,133 @@
+name: ChatDevelopment
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/images/frontend/Dockerfile.development
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    restart: unless-stopped
+    ports:
+      - "8001:3000"
+    volumes:
+      - ../frontend/:/app/
+    networks:
+      - chat
+
+  backend:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    links:
+      - mysql
+    ports:
+      - "8003:80"
+    volumes:
+      - ../backend:/var/www/html:ro
+      - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    networks:
+      - chat
+
+  php:
+    image: chat-php-development
+    build:
+      context: ../backend/
+      dockerfile: ../docker/images/backend/Dockerfile.development
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    links:
+      - mysql
+    working_dir: /var/www/html
+    volumes:
+      - ../backend:/var/www/html
+      - ./volumes/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini:ro
+    networks:
+      - chat
+
+  reverb:
+    image: chat-php-development
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../backend:/var/www/html
+    ports:
+      - "8005:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "php", "-r", "exit(@fsockopen('127.0.0.1', 8080) ? 0 : 1);" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - chat
+
+  queue:
+    image: chat-php-development
+    command: [ "php", "artisan", "queue:work", "--sleep=1", "--tries=3", "--timeout=60" ]
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../backend:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reverb:
+        condition: service_healthy
+    links:
+      - mysql
+    networks:
+      - chat
+
+  mysql:
+    build:
+      context: ./images/mysql
+      dockerfile: Dockerfile
+    volumes:
+      - mysql:/var/lib/mysql
+    env_file:
+      - ./volumes/mysql/env.yml
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - chat
+
+  phpmyadmin:
+    image: phpmyadmin
+    links:
+      - mysql
+    ports:
+      - "8004:80"
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=mysql
+    volumes:
+      - phpmyadmin:/sessions
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - chat
+
+volumes:
+  mysql:
+  phpmyadmin:
+
+networks:
+  chat:
+    driver: bridge

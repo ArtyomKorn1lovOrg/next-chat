@@ -1,0 +1,26 @@
+@use '../../vars' as ui;
+
+.b-chat-composer {
+  @include ui.flex(row, flex-end);
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  flex-shrink: 0;
+  padding: 16px ui.$spaceLarge;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid ui.$colorBorder;
+  background: ui.$colorSurface;
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: ui.$sm) {
+  .b-chat-composer {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+}

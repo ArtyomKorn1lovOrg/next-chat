@@ -1,0 +1,26 @@
+@use '../../../vars' as ui;
+
+.b-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid ui.$colorBorder;
+  border-radius: 14px;
+  background: ui.$colorCanvas;
+  color: ui.$colorText;
+  font-family: ui.$fontFamily;
+  font-size: ui.$textRegular;
+  line-height: 1.5;
+
+  &:focus-within {
+    border-color: ui.$colorAccent;
+  }
+
+  &__control {
+    padding: 0;
+
+    &::placeholder {
+      opacity: 1;
+      color: ui.$colorMuted;
+    }
+  }
+}

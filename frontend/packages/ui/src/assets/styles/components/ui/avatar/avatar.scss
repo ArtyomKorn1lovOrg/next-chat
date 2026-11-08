@@ -1,0 +1,11 @@
+@use '../../../vars' as ui;
+
+.b-avatar {
+  width: 44px;
+  height: 44px;
+  background: ui.$colorOutgoing;
+  color: ui.$colorText;
+  font-family: ui.$fontFamily;
+  font-size: 15px;
+  font-weight: ui.$textSemibold;
+}

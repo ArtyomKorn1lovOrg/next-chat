@@ -1,0 +1,49 @@
+@use '../../vars' as ui;
+
+.b-chat {
+  @include ui.flex(column);
+  width: 100%;
+  max-width: ui.$maxWrapW;
+  height: 100vh;
+  margin-inline: auto;
+  background: ui.$colorChat;
+  border-inline: 1px solid ui.$colorBorder;
+
+  &__history {
+    @include ui.flex(column);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 28px ui.$spaceLarge;
+    scrollbar-width: thin;
+    scrollbar-color: ui.$colorBorder transparent;
+  }
+
+  &__messages {
+    @include ui.flex(column);
+    gap: 12px;
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0;
+  }
+
+  &__date {
+    align-self: center;
+    margin-block: 0 16px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: ui.$colorSurface;
+    color: ui.$colorMuted;
+    font-size: ui.$textSmall;
+  }
+}
+
+@media (max-width: ui.$sm) {
+  .b-chat {
+    border: 0;
+
+    &__history {
+      padding: 20px 12px;
+    }
+  }
+}

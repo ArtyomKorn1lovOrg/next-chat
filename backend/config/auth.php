@@ -1,6 +1,6 @@
 <?php
 
-use App\User\Domain\ORM\User;
+use Package\User\Infrastructure\ORM\User;
 
 return [
 
